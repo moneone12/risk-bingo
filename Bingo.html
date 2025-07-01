@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Management Bingo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(255, 255, 255, 0.93);
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            padding: 25px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            background: linear-gradient(to right, #4e54c8, #8f94fb);
+            margin: -25px -25px 25px -25px;
+            color: white;
+            border-bottom: 5px solid #ffcc00;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .game-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .card-container {
+            flex: 1;
+            min-width: 300px;
+            background: #f9f9f9;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .bingo-card {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin: 15px 0;
+        }
+        
+        .card-header {
+            background: #4e54c8;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            padding: 12px 5px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+        }
+        
+        .bingo-square {
+            background: white;
+            border: 2px solid #4e54c8;
+            border-radius: 8px;
+            padding: 15px 5px;
+            text-align: center;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 80px;
+            position: relative;
+        }
+        
+        .bingo-square:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            background: #f0f5ff;
+        }
+        
+        .bingo-square.marked {
+            background: #ffcc00;
+            border-color: #e6b800;
+            position: relative;
+        }
+        
+        .bingo-square.marked::after {
+            content: "✓";
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size: 1.2rem;
+            color: #4e54c8;
+        }
+        
+        .free-space {
+            background: #8f94fb;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 14px 28px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, #4e54c8, #8f94fb);
+            color: white;
+            box-shadow: 0 4px 10px rgba(78, 84, 200, 0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(78, 84, 200, 0.6);
+        }
+        
+        .btn-secondary {
+            background: #ffcc00;
+            color: #333;
+            box-shadow: 0 4px 10px rgba(255, 204, 0, 0.4);
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(255, 204, 0, 0.6);
+        }
+        
+        .share-section {
+            background: #eef2ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .share-container {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .share-link {
+            flex: 1;
+            padding: 12px 20px;
+            background: white;
+            border: 2px dashed #4e54c8;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            min-width: 200px;
+        }
+        
+        .bingo-message {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ffcc00;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            height: 60px;
+            margin: 15px 0;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        
+        .bingo-message.show {
+            opacity: 1;
+        }
+        
+        .instructions {
+            background: #f0f5ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 25px;
+        }
+        
+        .instructions h3 {
+            color: #4e54c8;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .instructions ul {
+            padding-left: 25px;
+        }
+        
+        .instructions li {
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+        
+        @media (max-width: 768px) {
+            .game-area {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .bingo-square {
+                min-height: 70px;
+                font-size: 0.75rem;
+                padding: 10px 3px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-exclamation-triangle"></i> Risk Management Bingo</h1>
+            <p class="subtitle">Learn about safety and risk awareness while playing bingo with your classmates!</p>
+        </header>
+        
+        <div class="bingo-message" id="bingoMessage">BINGO! 🎉</div>
+        
+        <div class="game-area">
+            <div class="card-container">
+                <div class="bingo-card" id="bingoCard"></div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn btn-primary" id="newCardBtn">
+                <i class="fas fa-sync-alt"></i> New Card
+            </button>
+            <button class="btn btn-secondary" id="shareBtn">
+                <i class="fas fa-share-alt"></i> Share Game
+            </button>
+        </div>
+        
+        <div class="share-section">
+            <h3><i class="fas fa-link"></i> Share Your Unique Bingo Card</h3>
+            <div class="share-container">
+                <input type="text" class="share-link" id="shareLink" readonly>
+                <button class="btn btn-primary" id="copyBtn">
+                    <i class="fas fa-copy"></i> Copy Link
+                </button>
+            </div>
+            <p style="margin-top: 15px; font-size: 0.9rem; color: #666;">
+                Share this link with friends so they can play with their own unique card!
+            </p>
+        </div>
+        
+        <div class="instructions">
+            <h3><i class="fas fa-info-circle"></i> How to Play</h3>
+            <ul>
+                <li><strong>Mark squares</strong> when you learn about or experience the risk management concept</li>
+                <li>Get <strong>5 in a row</strong> (horizontally, vertically, or diagonally) to win</li>
+                <li>The <strong>center square is FREE</strong> - mark it anytime!</li>
+                <li>Share your unique card link with classmates to play together</li>
+                <li>Learn about important risk management concepts while playing!</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Risk management concepts for students
+        const riskConcepts = [
+            "Not wearing a helmet while biking",
+            "Sharing personal info online",
+            "Not looking both ways before crossing",
+            "Leaving belongings unattended",
+            "Using weak passwords",
+            "Ignoring fire drill instructions",
+            "Not reporting suspicious activity",
+            "Skipping sunscreen on sunny days",
+            "Texting while walking",
+            "Accepting friend requests from strangers",
+            "Not washing hands before eating",
+            "Sharing login credentials",
+            "Running in hallways",
+            "Not backing up important files",
+            "Ignoring weather warnings",
+            "Using public Wi-Fi without VPN",
+            "Not wearing seatbelt in car",
+            "Posting location publicly online",
+            "Not verifying information sources",
+            "Ignoring allergy warnings",
+            "Using damaged equipment",
+            "Not locking devices when away",
+            "Sharing too much on social media",
+            "Not having emergency contacts",
+            "Ignoring privacy settings",
+            "Not securing valuable items",
+            "Using phone while driving/biking",
+            "Not reading terms and conditions",
+            "Ignoring cybersecurity updates",
+            "Not having a fire escape plan",
+            "Sharing private photos online",
+            "Not checking food expiration dates",
+            "Ignoring pedestrian signals",
+            "Using same password everywhere",
+            "Not reporting bullying incidents"
+        ];
+        
+        // DOM Elements
+        const bingoCard = document.getElementById('bingoCard');
+        const newCardBtn = document.getElementById('newCardBtn');
+        const shareBtn = document.getElementById('shareBtn');
+        const shareLink = document.getElementById('shareLink');
+        const copyBtn = document.getElementById('copyBtn');
+        const bingoMessage = document.getElementById('bingoMessage');
+        
+        // Current card data
+        let currentCard = [];
+        let cardId = '';
+        
+        // Initialize the game
+        function initGame() {
+            generateCard();
+            renderCard();
+            generateShareLink();
+            
+            // Event listeners
+            newCardBtn.addEventListener('click', () => {
+                generateCard();
+                renderCard();
+                generateShareLink();
+                bingoMessage.classList.remove('show');
+            });
+            
+            shareBtn.addEventListener('click', generateShareLink);
+            
+            copyBtn.addEventListener('click', () => {
+                shareLink.select();
+                document.execCommand('copy');
+                alert('Link copied to clipboard!');
+            });
+        }
+        
+        // Generate a unique bingo card
+        function generateCard() {
+            // Create a unique ID for this card
+            cardId = 'card-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+            
+            // Shuffle the risk concepts
+            const shuffledConcepts = [...riskConcepts].sort(() => Math.random() - 0.5);
+            
+            // Create a 5x5 card (25 positions)
+            currentCard = [];
+            for (let i = 0; i < 25; i++) {
+                if (i === 12) {
+                    // Center is free space
+                    currentCard.push({text: "FREE SPACE", marked: true});
+                } else {
+                    currentCard.push({
+                        text: shuffledConcepts.pop(),
+                        marked: false
+                    });
+                }
+            }
+        }
+        
+        // Render the bingo card to the DOM
+        function renderCard() {
+            bingoCard.innerHTML = '';
+            
+            // Add B-I-N-G-O headers
+            ['B', 'I', 'N', 'G', 'O'].forEach(letter => {
+                const header = document.createElement('div');
+                header.className = 'card-header';
+                header.textContent = letter;
+                bingoCard.appendChild(header);
+            });
+            
+            // Add squares
+            currentCard.forEach((square, index) => {
+                const squareEl = document.createElement('div');
+                squareEl.className = `bingo-square ${index === 12 ? 'free-space' : ''}`;
+                squareEl.textContent = square.text;
+                
+                if (square.marked) {
+                    squareEl.classList.add('marked');
+                }
+                
+                if (index !== 12) {
+                    squareEl.addEventListener('click', () => {
+                        currentCard[index].marked = !currentCard[index].marked;
+                        squareEl.classList.toggle('marked');
+                        checkBingo();
+                    });
+                }
+                
+                bingoCard.appendChild(squareEl);
+            });
+        }
+        
+        // Check for bingo
+        function checkBingo() {
+            // Check rows
+            for (let row = 0; row < 5; row++) {
+                let rowMarked = true;
+                for (let col = 0; col < 5; col++) {
+                    if (!currentCard[row * 5 + col].marked) {
+                        rowMarked = false;
+                        break;
+                    }
+                }
+                if (rowMarked) {
+                    showBingo();
+                    return;
+                }
+            }
+            
+            // Check columns
+            for (let col = 0; col < 5; col++) {
+                let colMarked = true;
+                for (let row = 0; row < 5; row++) {
+                    if (!currentCard[row * 5 + col].marked) {
+                        colMarked = false;
+                        break;
+                    }
+                }
+                if (colMarked) {
+                    showBingo();
+                    return;
+                }
+            }
+            
+            // Check diagonals
+            let diag1 = true;
+            let diag2 = true;
+            for (let i = 0; i < 5; i++) {
+                if (!currentCard[i * 5 + i].marked) diag1 = false;
+                if (!currentCard[i * 5 + (4 - i)].marked) diag2 = false;
+            }
+            
+            if (diag1 || diag2) {
+                showBingo();
+            }
+        }
+        
+        // Show bingo message
+        function showBingo() {
+            bingoMessage.classList.add('show');
+            setTimeout(() => {
+                bingoMessage.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Generate shareable link
+        function generateShareLink() {
+            const baseUrl = window.location.href.split('?')[0];
+            const shareUrl = `${baseUrl}?card=${cardId}`;
+            shareLink.value = shareUrl;
+        }
+        
+        // Load a card from URL parameters
+        function loadCardFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const cardParam = urlParams.get('card');
+            
+            if (cardParam && cardParam.startsWith('card-')) {
+                cardId = cardParam;
+                // For this demo, we'll generate a new card with the same ID
+                // In a real app, you would store cards and retrieve by ID
+                generateCard();
+                renderCard();
+                generateShareLink();
+            } else {
+                generateCard();
+                renderCard();
+                generateShareLink();
+            }
+        }
+        
+        // Start the game when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            loadCardFromUrl();
+            initGame();
+        });
+    </script>
+</body>
+</html>
